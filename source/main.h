@@ -20,6 +20,24 @@ struct color_t {
     int b;
 };
 
+
+// Defines several possible options for camera and object movement. Used as abstraction to stay away from window-system specific input methods
+enum MovementType {
+    CAMERA_LEFT,
+    CAMERA_RIGHT,
+    CAMERA_IN,
+    CAMERA_OUT,
+    CAMERA_UP,
+    CAMERA_DOWN,
+
+    OBJECT_LEFT,
+    OBJECT_RIGHT,
+    OBJECT_IN,
+    OBJECT_OUT,
+    OBJECT_UP,
+    OBJECT_DOWN,
+};
+
 // nonedit.cpp
 GLFWwindow *initGLFW(int width, int height);
 GLuint     LoadShaders(const char *vertex_file_path, const char *fragment_file_path);
@@ -36,6 +54,11 @@ void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
 void error_callback(int error, const char *description);
 void quit(GLFWwindow *window);
 void reshapeWindow(GLFWwindow *window, int width, int height);
+
+// Input handler providers
+void moveCamera(MovementType mt);
+void moveObject(MovementType mt);
+void startRotation();
 
 // Types
 struct VAO {
