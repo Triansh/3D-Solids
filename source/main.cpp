@@ -34,6 +34,19 @@ void startCameraSpin() {
     camera.spin = !camera.spin;
 }
 
+void teleport(int num) {
+    if (num == 1) {
+        camera.Position = glm::vec3(0, 0, 10);
+    } else if (num == 2) {
+        camera.Position = glm::vec3(5, -5, 5);
+    } else if (num == 3) {
+        camera.Position = glm::vec3(10, 0, 0);
+    } else {
+        return;
+    }
+    camera.recenter(ball.position);
+}
+
 float screen_zoom = 1, screen_center_x = 0, screen_center_y = 0;
 //float camera_rotation_angle = 0;
 

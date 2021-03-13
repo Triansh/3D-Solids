@@ -60,6 +60,13 @@ void keyboard(GLFWwindow *window, int key, int scancode, int action, int mods) {
         if (key == GLFW_KEY_T)
             startCameraSpin();
 
+        if (key == GLFW_KEY_F)
+            teleport(1);
+        else if (key == GLFW_KEY_G)
+            teleport(2);
+        else if (key == GLFW_KEY_H)
+            teleport(3);
+
     } else if (action == GLFW_PRESS) {
         cout << key << " 2\n";
 

@@ -64,6 +64,7 @@ void moveCamera(MovementType mt);
 void moveObject(MovementType mt);
 void startRotation();
 void startCameraSpin();
+void teleport(int num);
 
 // Types
 struct VAO {
