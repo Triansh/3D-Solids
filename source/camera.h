@@ -1,11 +1,8 @@
 #ifndef INC_3DSHAPES_CAMERA_H
 #define INC_3DSHAPES_CAMERA_H
 
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-
-#include <vector>
 
 #include "main.h"
 
@@ -70,6 +67,7 @@ public:
 
 private:
 
+    // Executed while camera is spinning around one of target's axis
     void UpdateSpinning(glm::vec3 target) {
         if (!spin) return;
         glm::vec3 axis = (glm::normalize(glm::cross(target - Position, Right)));

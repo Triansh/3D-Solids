@@ -14,9 +14,117 @@ GLFWwindow *window;
 **************************/
 
 Ball ball;
-
 Camera camera;
+Timer t60(1.0 / 60);
 
+void draw();
+void tick_elements();
+void initGL(GLFWwindow *window, int width, int height, int num);
+int takeShapeNumber();
+
+int main(int argc, char **argv) {
+
+    srand(time(0));
+    int width = 800;
+    int height = 600;
+
+    int num = takeShapeNumber();
+
+    window = initGLFW(width, height);
+
+    initGL(window, width, height, num);
+
+    /* Draw in loop */
+    while (!glfwWindowShouldClose(window)) {
+        // Process timers
+
+        if (t60.processTick()) { // 60 fps
+            // OpenGL Draw commands
+            draw();
+            // Swap Frame Buffer in double buffering
+            glfwSwapBuffers(window);
+
+            tick_elements();
+        }
+        // Poll for Keyboard and mouse events
+        glfwPollEvents();
+    }
+    quit(window);
+}
+
+
+/* Render the scene with openGL */
+/* Edit this function according to your assignment */
+void draw() {
+    // clear the color and depth in the frame buffer
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // use the loaded shader program
+    glUseProgram(programID);
+
+    Matrices.view = camera.GetViewMatrix();
+    glm::mat4 VP = Matrices.projection * Matrices.view;
+
+    // Send our transformation to the currently bound shader, in the "MVP" uniform
+    // For each model you render, since the MVP will be different (at least the M part)
+    glm::mat4 MVP;  // MVP = Projection * View * Model
+
+    // Scene render
+    ball.draw(VP);
+}
+
+
+void tick_elements() {
+    ball.tick();
+    camera.tick(ball.position);
+}
+
+/* Initialize the OpenGL rendering properties */
+/* Add all the models to be created here */
+void initGL(GLFWwindow *window, int width, int height, int num) {
+    /* Objects should be created before any other gl function and shaders */
+
+    ball = Ball(0, 0, num);
+    camera = Camera();
+
+    // Create and compile our GLSL program from the shaders
+    programID = LoadShaders("../source/shaders/shader.vert", "../source/shaders/shader.frag");
+    // Get a handle for our "MVP" uniform
+    Matrices.MatrixID = glGetUniformLocation(programID, "MVP");
+
+    reshapeWindow(window, width, height);
+
+    // Background color of the scene
+    glClearColor(.9, .9, .9, 0.0f); // R, G, B, A
+    glClearDepth(1.0f);
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+
+    cout << "VENDOR: " << glGetString(GL_VENDOR) << endl;
+    cout << "RENDERER: " << glGetString(GL_RENDERER) << endl;
+    cout << "VERSION: " << glGetString(GL_VERSION) << endl;
+    cout << "GLSL: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl;
+}
+
+int takeShapeNumber() {
+
+    cout << "Choose one among these shapes:\n";
+    cout << "1. Decagonal Prism\n";
+    cout << "2. Hexagonal Dipyramid\n";
+    cout << "3. Undecagonal Pyramid\n";
+    cout << "Type the number to choose (If number is not from this range, 3 will be taken): ";
+
+    int number;
+    cin >> number;
+    return number <= 3 and number >= 1 ? number : 3;
+
+}
+
+
+void reset_screen() {
+    Matrices.projection = glm::perspective(glm::radians(45.0f), (float) 8.0 / 6, 0.1f, 100.0f);
+}
 
 void moveCamera(MovementType mt) {
     camera.ProcessKeyboard(mt);
@@ -45,135 +153,4 @@ void teleport(int num) {
         return;
     }
     camera.recenter(ball.position);
-}
-
-float screen_zoom = 1, screen_center_x = 0, screen_center_y = 0;
-//float camera_rotation_angle = 0;
-
-Timer t60(1.0 / 60);
-
-/* Render the scene with openGL */
-/* Edit this function according to your assignment */
-void draw() {
-    // clear the color and depth in the frame buffer
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // use the loaded shader program
-    // Don't change unless you know what you are doing
-    glUseProgram(programID);
-
-    // Eye - Location of camera. Don't change unless you are sure!!
-//    glm::vec3 eye ( 5*cos(camera_rotation_angle*M_PI/180.0f), 0, 5*sin(camera_rotation_angle*M_PI/180.0f) );
-    // Target - Where is the camera looking at.  Don't change unless you are sure!!
-//    glm::vec3 target (0, 0, 0);
-    // Up - Up vector defines tilt of camera.  Don't change unless you are sure!!
-//    glm::vec3 up (0, 1, 0);
-
-    // Compute Camera matrix (view)
-//    Matrices.view = glm::lookAt( eye, target, up ); // Rotating Camera for 3D
-    // Don't change unless you are sure!!
-    // Matrices.view = glm::lookAt(glm::vec3(0, 0, 3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)); // Fixed camera for 2D (ortho) in XY plane
-
-    // Compute ViewProject matrix as view/camera might not be changed for this frame (basic scenario)
-    // Don't change unless you are sure!!
-
-    Matrices.view = camera.GetViewMatrix();
-    glm::mat4 VP = Matrices.projection * Matrices.view;
-
-    // Send our transformation to the currently bound shader, in the "MVP" uniform
-    // For each model you render, since the MVP will be different (at least the M part)
-    // Don't change unless you are sure!!
-    glm::mat4 MVP;  // MVP = Projection * View * Model
-
-    // Scene render
-    ball.draw(VP);
-}
-
-
-void tick_elements() {
-    ball.tick();
-    camera.tick(ball.position);
-}
-
-/* Initialize the OpenGL rendering properties */
-/* Add all the models to be created here */
-void initGL(GLFWwindow *window, int width, int height, int num) {
-    /* Objects should be created before any other gl function and shaders */
-    // Create the models
-
-    ball = Ball(0, 0, num);
-    camera = Camera();
-
-    // Create and compile our GLSL program from the shaders
-    programID = LoadShaders("../source/shaders/shader.vert", "../source/shaders/shader.frag");
-    // Get a handle for our "MVP" uniform
-    Matrices.MatrixID = glGetUniformLocation(programID, "MVP");
-
-
-    reshapeWindow(window, width, height);
-
-    // Background color of the scene
-    glClearColor(COLOR_BACKGROUND.r / 256.0, COLOR_BACKGROUND.g / 256.0, COLOR_BACKGROUND.b / 256.0,
-                 0.0f); // R, G, B, A
-    glClearDepth(1.0f);
-
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
-
-    cout << "VENDOR: " << glGetString(GL_VENDOR) << endl;
-    cout << "RENDERER: " << glGetString(GL_RENDERER) << endl;
-    cout << "VERSION: " << glGetString(GL_VERSION) << endl;
-    cout << "GLSL: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl;
-}
-
-int takeShapeNumber() {
-
-    cout << "Choose one among these shapes:\n";
-    cout << "1. Decagonal Prism\n";
-    cout << "2. Hexagonal Dipyramid\n";
-    cout << "3. Undecagonal Pyramid\n";
-    cout << "Type the number to choose (If number is not from this range, 3 will be taken): ";
-
-    int number;
-    cin >> number;
-    return number <= 3 and number >= 1 ? number : 3;
-
-}
-
-
-int main(int argc, char **argv) {
-    srand(time(0));
-    int width = 800;
-    int height = 600;
-
-    int num = takeShapeNumber();
-
-
-    window = initGLFW(width, height);
-
-    initGL(window, width, height, num);
-
-    /* Draw in loop */
-    while (!glfwWindowShouldClose(window)) {
-        // Process timers
-
-        if (t60.processTick()) {
-            // 60 fps
-            // OpenGL Draw commands
-            draw();
-            // Swap Frame Buffer in double buffering
-            glfwSwapBuffers(window);
-
-            tick_elements();
-        }
-
-        // Poll for Keyboard and mouse events
-        glfwPollEvents();
-    }
-
-    quit(window);
-}
-
-void reset_screen() {
-    Matrices.projection = glm::perspective(glm::radians(45.0f), (float) 8.0 / 6, 0.1f, 100.0f);
 }

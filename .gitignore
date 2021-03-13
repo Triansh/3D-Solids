@@ -33,6 +33,7 @@
 
 # CMake
 build/
+libraries/
 .idea/
 .vscode
 cmake-build-debug

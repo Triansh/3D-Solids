@@ -12,16 +12,12 @@ public:
     float rotation;
     void draw(glm::mat4 VP);
     void processKeyBoard(MovementType mt);
-    void set_position(float x, float y);
     void tick();
-    double speed;
+    float speed;
     int isRotating ;
+
 protected:
     VAO *object;
-};
-
-class Shape1 : public Ball{
-
 };
 
 #endif // BALL_H
