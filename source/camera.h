@@ -29,7 +29,6 @@ public:
     glm::vec3 Up;
     glm::vec3 Right;
     glm::vec3 WorldUp;
-    glm::vec3 target;
     // euler Angles
     float Yaw;
     float Pitch;
@@ -46,9 +45,8 @@ public:
         WorldUp = up;
         Yaw = yaw;
         Pitch = pitch;
-        target = glm::vec3(0, 0, 0);
         spin = 0;
-        rotation = 1.0;
+        rotation = 1;
         updateCameraVectors();
     }
 
@@ -64,16 +62,15 @@ public:
 
     // returns the view matrix calculated using Euler Angles and the LookAt Matrix
     glm::mat4 GetViewMatrix() const {
-        return glm::lookAt(Position, target, Up);
+        return glm::lookAt(Position, Position + Front, Up);
     }
 
 //    glm::mat4 GetViewMatrix(glm::vec3 target) const {
 //        return glm::lookAt(Position, target, Up);
 //    }
 
-    void UpdateSpinning(glm::vec3 ballpos) {
+    void UpdateSpinning(glm::vec3 target) {
         if (!spin) return;
-//        float radius = glm::distance(target, Position);
 //        Pitch += .1;
 //        Yaw += .1;
 
@@ -82,49 +79,41 @@ public:
 //        Position.z = target.x + radius * cos(Pitch);
 //        updateCameraVectors();
 //        rotation += .1;
-//        float mag = glm::distance(target, Position);
-        target = ballpos;
-        glm::vec3 axis = (glm::normalize(glm::cross(ballpos - Position, Right)));
-//        std::cout << Position.x << " " << Position.y << " " << Position.z << "\n";
-//        glm::mat4 t1 = glm::translate(vx);
-//         rotateMatrix = glm::mat4(1);
-        glm::mat4 t1 = glm::translate(ballpos );
-        glm::mat4 rotateMatrix = glm::rotate(glm::radians(rotation), glm::vec3(t1 * glm::vec4(axis, 1)));
-//        glm::mat4 t2 = glm::translate(axis - ballpos);
-//        glm::mat4 t2 = glm::translate(-vx);
-        Front = glm::normalize(ballpos - Position);
-        Position = glm::vec3(rotateMatrix * glm::vec4(Position, 1));
-        std::cout << Position.x << " " << Position.y << " " << Position.z << "\n";
+//        float radius = glm::distance(target, Position);
+//        Position = radius * glm::normalize(Position);
+
+//        Position = glm::vec3(newX, ballpos.y, newZ);
+//        float camZ = mag * sin(rotation);
+        glm::vec3 axis = (glm::normalize(glm::cross(target - Position, Right)));
+////        std::cout << Position.x << " " << Position.y << " " << Position.z << "\n";
+////        glm::mat4 t1 = glm::translate(vx);
+////         rotateMatrix = glm::mat4(1);
+        glm::mat4 t1 = glm::translate(-target);
+        glm::mat4 rotateMatrix = glm::rotate(glm::radians(rotation), axis);
+        glm::mat4 t2 = glm::translate(target);
+////        glm::mat4 t2 = glm::translate(-vx);
+//        target = ballpos;
+        Position = glm::vec3(t2 * rotateMatrix * t1 * glm::vec4(Position, 1));
+        Front = glm::normalize(target - Position);
+        std::cout << target.x << " " << target.y << " " << target.z << "\n";
         updateCameraVectors(false);
     }
 
     // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-    void ProcessKeyboard(MovementType direction, float deltaTime = 1.0 / 50) {
+    void ProcessKeyboard(MovementType direction, float deltaTime = 1.0 / 10) {
         float velocity = MovementSpeed * deltaTime;
-        if (direction == CAMERA_IN) {
-            target += Front * velocity;
+        if (direction == CAMERA_IN)
             Position += Front * velocity;
-        }
-        if (direction == CAMERA_OUT) {
-            target -= Front * velocity;
+        if (direction == CAMERA_OUT)
             Position -= Front * velocity;
-        }
-        if (direction == CAMERA_LEFT) {
-            target -= Right * velocity;
+        if (direction == CAMERA_LEFT)
             Position -= Right * velocity;
-        }
-        if (direction == CAMERA_RIGHT) {
-            target += Right * velocity;
+        if (direction == CAMERA_RIGHT)
             Position += Right * velocity;
-        }
-        if (direction == CAMERA_UP) {
-            target += Up * velocity;
+        if (direction == CAMERA_UP)
             Position += Up * velocity;
-        }
-        if (direction == CAMERA_DOWN) {
-            target -= Up * velocity;
+        if (direction == CAMERA_DOWN)
             Position -= Up * velocity;
-        }
 
 
 //        if (direction == CAMERA_IN) {
@@ -194,13 +183,13 @@ private:
     // calculates the front vector from the Camera's (updated) Euler Angles
     void updateCameraVectors(bool fr = true) {
         // calculate the new Front vector
-//        if (fr) {
-//            glm::vec3 front;
-//            front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
-//            front.y = sin(glm::radians(Pitch));
-//            front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
-//            Front = front;
-//        }
+        if (fr) {
+            glm::vec3 front;
+            front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
+            front.y = sin(glm::radians(Pitch));
+            front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
+            Front = front;
+        }
 //        // also re-calculate the Right and Up vector
         Right = glm::normalize(glm::cross(Front,
                                           WorldUp));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.

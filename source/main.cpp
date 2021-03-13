@@ -32,9 +32,6 @@ void startRotation() {
 
 void startCameraSpin() {
     camera.spin = !camera.spin;
-//    if (camera.spin == 0) {
-//        camera.Front = ball.position - camera.Position;
-//    }
 }
 
 float screen_zoom = 1, screen_center_x = 0, screen_center_y = 0;
@@ -67,9 +64,7 @@ void draw() {
     // Compute ViewProject matrix as view/camera might not be changed for this frame (basic scenario)
     // Don't change unless you are sure!!
 
-    Matrices.view =
-//            camera.spin ? camera.GetViewMatrix() :
-            camera.GetViewMatrix();
+    Matrices.view = camera.GetViewMatrix();
     glm::mat4 VP = Matrices.projection * Matrices.view;
 
     // Send our transformation to the currently bound shader, in the "MVP" uniform
@@ -89,11 +84,11 @@ void tick_elements() {
 
 /* Initialize the OpenGL rendering properties */
 /* Add all the models to be created here */
-void initGL(GLFWwindow *window, int width, int height) {
+void initGL(GLFWwindow *window, int width, int height, int num) {
     /* Objects should be created before any other gl function and shaders */
     // Create the models
 
-    ball = Ball(0, 0, COLOR_RED);
+    ball = Ball(0, 0, num);
     camera = Camera();
 
     // Create and compile our GLSL program from the shaders
@@ -118,15 +113,32 @@ void initGL(GLFWwindow *window, int width, int height) {
     cout << "GLSL: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl;
 }
 
+int takeShapeNumber() {
+
+    cout << "Choose one among these shapes:\n";
+    cout << "1. Decagonal Prism\n";
+    cout << "2. Hexagonal Dipyramid\n";
+    cout << "3. Undecagonal Pyramid\n";
+    cout << "Type the number to choose (If number is not from this range, 3 will be taken): ";
+
+    int number;
+    cin >> number;
+    return number <= 3 and number >= 1 ? number : 3;
+
+}
+
 
 int main(int argc, char **argv) {
     srand(time(0));
     int width = 800;
     int height = 600;
 
+    int num = takeShapeNumber();
+
+
     window = initGLFW(width, height);
 
-    initGL(window, width, height);
+    initGL(window, width, height, num);
 
     /* Draw in loop */
     while (!glfwWindowShouldClose(window)) {
