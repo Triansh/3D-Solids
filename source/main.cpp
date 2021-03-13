@@ -18,17 +18,23 @@ Ball ball;
 Camera camera;
 
 
-
 void moveCamera(MovementType mt) {
     camera.ProcessKeyboard(mt);
 }
 
-void moveObject(MovementType mt){
+void moveObject(MovementType mt) {
     ball.processKeyBoard(mt);
 }
 
-void startRotation(){
+void startRotation() {
     ball.isRotating = !ball.isRotating;
+}
+
+void startCameraSpin() {
+    camera.spin = !camera.spin;
+//    if (camera.spin == 0) {
+//        camera.Front = ball.position - camera.Position;
+//    }
 }
 
 float screen_zoom = 1, screen_center_x = 0, screen_center_y = 0;
@@ -60,7 +66,10 @@ void draw() {
 
     // Compute ViewProject matrix as view/camera might not be changed for this frame (basic scenario)
     // Don't change unless you are sure!!
-    Matrices.view = camera.GetViewMatrix();
+
+    Matrices.view =
+//            camera.spin ? camera.GetViewMatrix() :
+            camera.GetViewMatrix();
     glm::mat4 VP = Matrices.projection * Matrices.view;
 
     // Send our transformation to the currently bound shader, in the "MVP" uniform
@@ -72,22 +81,10 @@ void draw() {
     ball.draw(VP);
 }
 
-void tick_input(GLFWwindow *window) {
-//    int left = glfwGetKey(window, GLFW_KEY_LEFT);
-//    int right = glfwGetKey(window, GLFW_KEY_RIGHT);
-//    if (left) {
-//        changeCamera(BACKWARD);
-//        cout << "PRESEED\n";
-//    } else if (right) {
-//        changeCamera(FORWARD);
-//        cout << "PRESEED\n";
-//
-//    }
-}
 
 void tick_elements() {
     ball.tick();
-//    camera_rotation_angle += 1;
+    camera.tick(ball.position);
 }
 
 /* Initialize the OpenGL rendering properties */
@@ -143,7 +140,6 @@ int main(int argc, char **argv) {
             glfwSwapBuffers(window);
 
             tick_elements();
-            tick_input(window);
         }
 
         // Poll for Keyboard and mouse events

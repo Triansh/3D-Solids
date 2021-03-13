@@ -16,8 +16,12 @@ public:
     void tick();
     double speed;
     int isRotating ;
-private:
+protected:
     VAO *object;
+};
+
+class Shape1 : public Ball{
+
 };
 
 #endif // BALL_H

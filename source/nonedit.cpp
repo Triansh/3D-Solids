@@ -17,7 +17,7 @@ using namespace std;
 
 /* Initialise glfw window, I/O callbacks and the renderer to use */
 /* Nothing to Edit here */
-GLFWwindow *initGLFW(int width, int height) {
+GLFWwindow*initGLFW(int width, int height) {
     GLFWwindow *window; // window desciptor/handle
 
     glfwSetErrorCallback(error_callback);
@@ -25,9 +25,9 @@ GLFWwindow *initGLFW(int width, int height) {
         // exit(EXIT_FAILURE);
     }
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,                 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,                 3);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT,           GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     window = glfwCreateWindow(width, height, "Sample OpenGL 3.3 Application", NULL, NULL);
@@ -43,7 +43,7 @@ GLFWwindow *initGLFW(int width, int height) {
     GLenum err = glewInit();
     if (err != GLEW_OK) {
         cout << "Error: Failed to initialise GLEW : " << glewGetErrorString(err) << endl;
-        exit(1);
+        exit (1);
     }
     glfwSwapInterval(1);
 
@@ -74,11 +74,11 @@ GLFWwindow *initGLFW(int width, int height) {
 GLuint LoadShaders(const char *vertex_file_path, const char *fragment_file_path) {
 
     // Create the shaders
-    GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+    GLuint VertexShaderID   = glCreateShader(GL_VERTEX_SHADER);
     GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 
     // Read the Vertex Shader code from the file
-    std::string VertexShaderCode;
+    std::string   VertexShaderCode;
     std::ifstream VertexShaderStream(vertex_file_path, std::ios::in);
     if (VertexShaderStream.is_open()) {
         std::string Line = "";
@@ -88,7 +88,7 @@ GLuint LoadShaders(const char *vertex_file_path, const char *fragment_file_path)
     }
 
     // Read the Fragment Shader code from the file
-    std::string FragmentShaderCode;
+    std::string   FragmentShaderCode;
     std::ifstream FragmentShaderStream(fragment_file_path, std::ios::in);
     if (FragmentShaderStream.is_open()) {
         std::string Line = "";
@@ -98,7 +98,7 @@ GLuint LoadShaders(const char *vertex_file_path, const char *fragment_file_path)
     }
 
     GLint Result = GL_FALSE;
-    int InfoLogLength;
+    int   InfoLogLength;
 
     // Compile Vertex Shader
     printf("Compiling shader : %s\n", vertex_file_path);
@@ -107,7 +107,7 @@ GLuint LoadShaders(const char *vertex_file_path, const char *fragment_file_path)
     glCompileShader(VertexShaderID);
 
     // Check Vertex Shader
-    glGetShaderiv(VertexShaderID, GL_COMPILE_STATUS, &Result);
+    glGetShaderiv(VertexShaderID,  GL_COMPILE_STATUS, &Result);
     glGetShaderiv(VertexShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
     std::vector<char> VertexShaderErrorMessage(InfoLogLength);
     glGetShaderInfoLog(VertexShaderID, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
@@ -120,21 +120,21 @@ GLuint LoadShaders(const char *vertex_file_path, const char *fragment_file_path)
     glCompileShader(FragmentShaderID);
 
     // Check Fragment Shader
-    glGetShaderiv(FragmentShaderID, GL_COMPILE_STATUS, &Result);
+    glGetShaderiv(FragmentShaderID,  GL_COMPILE_STATUS, &Result);
     glGetShaderiv(FragmentShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
     std::vector<char> FragmentShaderErrorMessage(InfoLogLength);
     glGetShaderInfoLog(FragmentShaderID, InfoLogLength, NULL, &FragmentShaderErrorMessage[0]);
-    fprintf(stdout, "%s\n", &FragmentShaderErrorMessage[0]);
+    fprintf(stdout,              "%s\n", &FragmentShaderErrorMessage[0]);
 
     // Link the program
     fprintf(stdout, "Linking program\n");
     GLuint ProgramID = glCreateProgram();
-    glAttachShader(ProgramID, VertexShaderID);
+    glAttachShader(ProgramID,   VertexShaderID);
     glAttachShader(ProgramID, FragmentShaderID);
     glLinkProgram(ProgramID);
 
     // Check the program
-    glGetProgramiv(ProgramID, GL_LINK_STATUS, &Result);
+    glGetProgramiv(ProgramID,     GL_LINK_STATUS, &Result);
     glGetProgramiv(ProgramID, GL_INFO_LOG_LENGTH, &InfoLogLength);
     std::vector<char> ProgramErrorMessage(max(InfoLogLength, int(1)));
     glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
@@ -148,58 +148,78 @@ GLuint LoadShaders(const char *vertex_file_path, const char *fragment_file_path)
 
 
 /* Generate VAO, VBOs and return VAO handle */
-struct VAO *create3DObject(GLenum primitive_mode, int numVertices, int numTriangles, const GLfloat *vertex_buffer_data,
-                           unsigned int *indices, GLenum fill_mode) {
+struct VAO *create3DObject(GLenum primitive_mode, int numVertices, const GLfloat *vertex_buffer_data, const GLfloat *color_buffer_data, GLenum fill_mode) {
     struct VAO *vao = new struct VAO;
     vao->PrimitiveMode = primitive_mode;
-    vao->NumVertices = numTriangles;
-    vao->FillMode = fill_mode;
+    vao->NumVertices   = numVertices;
+    vao->FillMode      = fill_mode;
 
     // Create Vertex Array Object
     // Should be done after CreateWindow and before any other GL calls
     glGenVertexArrays(1, &(vao->VertexArrayID)); // VAO
-    glGenBuffers(1, &(vao->VertexBuffer)); // VBO - vertices
-    glGenBuffers(1, &(vao->IndexBuffer)); // VBO - indices
+    glGenBuffers (1, &(vao->VertexBuffer)); // VBO - vertices
+    glGenBuffers (1, &(vao->ColorBuffer)); // VBO - colors
 
-    glBindVertexArray(vao->VertexArrayID); // Bind the VAO
-    // TODO
-    glBindBuffer(GL_ARRAY_BUFFER, vao->VertexBuffer); // Bind the VBO vertices
-    glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(float), vertex_buffer_data,
-                 GL_STATIC_DRAW); // Copy the vertices into VBO
-
+    glBindVertexArray (vao->VertexArrayID); // Bind the VAO
+    glBindBuffer (GL_ARRAY_BUFFER, vao->VertexBuffer); // Bind the VBO vertices
+    glBufferData (GL_ARRAY_BUFFER, 3 * numVertices * sizeof(GLfloat), vertex_buffer_data, GL_STATIC_DRAW); // Copy the vertices into VBO
     glVertexAttribPointer(
             0,                            // attribute 0. Vertices
             3,                            // size (x,y,z)
             GL_FLOAT,                     // type
             GL_FALSE,                     // normalized?
-            6 * sizeof(float),                            // stride
+            0,                            // stride
             (void *) 0                      // array buffer offset
     );
-    glEnableVertexAttribArray(0);
+
+    glBindBuffer (GL_ARRAY_BUFFER, vao->ColorBuffer); // Bind the VBO colors
+    glBufferData (GL_ARRAY_BUFFER, 3 * numVertices * sizeof(GLfloat), color_buffer_data, GL_STATIC_DRAW); // Copy the vertex colors
     glVertexAttribPointer(
             1,                            // attribute 1. Color
             3,                            // size (r,g,b)
             GL_FLOAT,                     // type
             GL_FALSE,                     // normalized?
-            6 * sizeof(float),                            // stride
-            (void *) (3 * sizeof(float))                // array buffer offset
+            0,                            // stride
+            (void *) 0                    // array buffer offset
     );
-    glEnableVertexAttribArray(1);
-
-    // TODO Bind the indices
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vao->IndexBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, numTriangles * sizeof(unsigned int), indices, GL_STATIC_DRAW);
 
     return vao;
 }
 
+/* Generate VAO, VBOs and return VAO handle - Common Color for all vertices */
+struct VAO *create3DObject(GLenum primitive_mode, int numVertices, const GLfloat *vertex_buffer_data, const GLfloat red, const GLfloat green, const GLfloat blue, GLenum fill_mode) {
+    GLfloat *color_buffer_data = new GLfloat[3 * numVertices];
+    for (int i = 0; i < numVertices; i++) {
+        color_buffer_data[3 * i]     = red;
+        color_buffer_data[3 * i + 1] = green;
+        color_buffer_data[3 * i + 2] = blue;
+    }
+
+    return create3DObject(primitive_mode, numVertices, vertex_buffer_data, color_buffer_data, fill_mode);
+}
+
+struct VAO *create3DObject(GLenum primitive_mode, int numVertices, const GLfloat *vertex_buffer_data, const color_t color, GLenum fill_mode) {
+    return create3DObject(primitive_mode, numVertices, vertex_buffer_data, color.r / 256.0, color.g / 256.0, color.b / 256.0, fill_mode);
+}
+
 /* Render the VBOs handled by VAO */
 void draw3DObject(struct VAO *vao) {
+    // Change the Fill Mode for this object
+    glPolygonMode (GL_FRONT_AND_BACK, vao->FillMode);
 
     // Bind the VAO to use
-    glBindVertexArray(vao->VertexArrayID);
+    glBindVertexArray (vao->VertexArrayID);
+
+    // Enable Vertex Attribute 0 - 3d Vertices
+    glEnableVertexAttribArray(0);
+    // Bind the VBO to use
+    glBindBuffer(GL_ARRAY_BUFFER, vao->VertexBuffer);
+
+    // Enable Vertex Attribute 1 - Color
+    glEnableVertexAttribArray(1);
+    // Bind the VBO to use
+    glBindBuffer(GL_ARRAY_BUFFER, vao->ColorBuffer);
 
     // Draw the geometry !
-    // Starting from vertex 0; 3 vertices total -> 1 triangle
-    glDrawElements(vao->PrimitiveMode, vao->NumVertices, GL_UNSIGNED_INT, 0);
+    glDrawArrays(vao->PrimitiveMode, 0, vao->NumVertices); // Starting from vertex 0; 3 vertices total -> 1 triangle
 }

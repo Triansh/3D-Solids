@@ -57,6 +57,9 @@ void keyboard(GLFWwindow *window, int key, int scancode, int action, int mods) {
         if (key == GLFW_KEY_R)
             startRotation();
 
+        if (key == GLFW_KEY_T)
+            startCameraSpin();
+
     } else if (action == GLFW_PRESS) {
         cout << key << " 2\n";
 

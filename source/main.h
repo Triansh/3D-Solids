@@ -41,8 +41,12 @@ enum MovementType {
 // nonedit.cpp
 GLFWwindow *initGLFW(int width, int height);
 GLuint     LoadShaders(const char *vertex_file_path, const char *fragment_file_path);
-struct VAO *create3DObject(GLenum primitive_mode, int numVertices, int numTriangles, const GLfloat *vertex_buffer_data,  unsigned int *indices,  GLenum fill_mode) ;
+struct VAO *create3DObject(GLenum primitive_mode, int numVertices, const GLfloat *vertex_buffer_data, const GLfloat *color_buffer_data, GLenum fill_mode = GL_FILL);
+struct VAO *create3DObject(GLenum primitive_mode, int numVertices, const GLfloat *vertex_buffer_data, const GLfloat red, const GLfloat green, const GLfloat blue, GLenum fill_mode = GL_FILL);
+struct VAO *create3DObject(GLenum primitive_mode, int numVertices, const GLfloat *vertex_buffer_data, const color_t color, GLenum fill_mode = GL_FILL);
 void       draw3DObject(struct VAO *vao);
+//struct VAO *create3DObject(GLenum primitive_mode, int numVertices, int numTriangles, const GLfloat *vertex_buffer_data,  unsigned int *indices,  GLenum fill_mode) ;
+
 
 // input.cpp
 void keyboard(GLFWwindow *window, int key, int scancode, int action, int mods);
@@ -59,6 +63,7 @@ void reshapeWindow(GLFWwindow *window, int width, int height);
 void moveCamera(MovementType mt);
 void moveObject(MovementType mt);
 void startRotation();
+void startCameraSpin();
 
 // Types
 struct VAO {
