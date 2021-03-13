@@ -107,6 +107,8 @@ void initGL(GLFWwindow *window, int width, int height, int num) {
     cout << "GLSL: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl;
 }
 
+
+// Basic function to chose which shape to render
 int takeShapeNumber() {
 
     cout << "Choose one among these shapes:\n";
@@ -126,22 +128,27 @@ void reset_screen() {
     Matrices.projection = glm::perspective(glm::radians(45.0f), (float) 8.0 / 6, 0.1f, 100.0f);
 }
 
+// Used for moving camera along its coordinate axes
 void moveCamera(MovementType mt) {
     camera.ProcessKeyboard(mt);
 }
 
+// Used for moving object along its coordinate axes
 void moveObject(MovementType mt) {
     ball.processKeyBoard(mt);
 }
 
+// Enable/Disable object rotation along worldspace's z axis
 void startRotation() {
     ball.isRotating = !ball.isRotating;
 }
 
+// Enable/Disable camera spinning about object
 void startCameraSpin() {
     camera.spin = !camera.spin;
 }
 
+// Shifts the camera to a pre-defined location
 void teleport(int num) {
     if (num == 1) {
         camera.Position = glm::vec3(0, 0, 10);

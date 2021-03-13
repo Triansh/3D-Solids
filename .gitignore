@@ -37,3 +37,4 @@ libraries/
 .idea/
 .vscode
 cmake-build-debug
+source/data/

@@ -20,7 +20,8 @@ struct color_t {
     int b;
 };
 
-// Defines several possible options for camera and object movement. Used as abstraction to stay away from window-system specific input methods
+// Defines several possible options for camera and object movement.
+// Used as abstraction to stay away from window-system specific input methods
 enum MovementType {
     CAMERA_LEFT,
     CAMERA_RIGHT,

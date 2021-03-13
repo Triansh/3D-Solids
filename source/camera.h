@@ -60,6 +60,8 @@ public:
             Position -= Up * velocity;
     }
 
+    // This is basically used in teleport.
+    // Positions the coordinate system, such that camera faces the target
     void recenter(glm::vec3 target) {
         Front = glm::normalize(target - Position);
         updateCameraVectors();
@@ -68,6 +70,7 @@ public:
 private:
 
     // Executed while camera is spinning around one of target's axis
+    // Based on the principle of shifting of origin
     void UpdateSpinning(glm::vec3 target) {
         if (!spin) return;
         glm::vec3 axis = (glm::normalize(glm::cross(target - Position, Right)));
