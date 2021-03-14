@@ -8,10 +8,7 @@
 ## Installation
 
 Make sure you have the following installed on your system.
-* glfw
-* glad
 * glew
-* glm
 * cmake
 
 Run the following commands to open a new window.

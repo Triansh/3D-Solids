@@ -18,8 +18,11 @@ Camera camera;
 Timer t60(1.0 / 60);
 
 void draw();
+
 void tick_elements();
+
 void initGL(GLFWwindow *window, int width, int height, int num);
+
 int takeShapeNumber();
 
 int main(int argc, char **argv) {
@@ -107,7 +110,6 @@ void initGL(GLFWwindow *window, int width, int height, int num) {
     cout << "GLSL: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl;
 }
 
-
 // Basic function to chose which shape to render
 int takeShapeNumber() {
 
@@ -136,6 +138,8 @@ void moveCamera(MovementType mt) {
 // Used for moving object along its coordinate axes
 void moveObject(MovementType mt) {
     ball.processKeyBoard(mt);
+    if (camera.spin)
+        camera.recenter(ball.position);
 }
 
 // Enable/Disable object rotation along worldspace's z axis
@@ -146,6 +150,9 @@ void startRotation() {
 // Enable/Disable camera spinning about object
 void startCameraSpin() {
     camera.spin = !camera.spin;
+    if (camera.spin) {
+        camera.recenter(ball.position);
+    }
 }
 
 // Shifts the camera to a pre-defined location

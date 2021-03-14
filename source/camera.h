@@ -14,6 +14,7 @@ public:
     int spin;
     float rotation;
     float speed;
+    glm::vec3 axes;
 
     // Camera coordinate and position Vector
     glm::vec3 Position;
@@ -65,6 +66,7 @@ public:
     void recenter(glm::vec3 target) {
         Front = glm::normalize(target - Position);
         updateCameraVectors();
+        axes = Up;
     }
 
 private:
@@ -73,13 +75,12 @@ private:
     // Based on the principle of shifting of origin
     void UpdateSpinning(glm::vec3 target) {
         if (!spin) return;
-        glm::vec3 axis = (glm::normalize(glm::cross(target - Position, Right)));
+//        glm::vec3 axis = (glm::normalize(glm::cross( Front, Right)));
         glm::mat4 t1 = glm::translate(-target);
-        glm::mat4 rotateMatrix = glm::rotate(glm::radians(rotation), axis);
+        glm::mat4 rotateMatrix = glm::rotate(glm::radians(rotation), axes);
         glm::mat4 t2 = glm::translate(target);
         Position = glm::vec3(t2 * rotateMatrix * t1 * glm::vec4(Position, 1));
         Front = glm::normalize(target - Position);
-        std::cout << target.x << " " << target.y << " " << target.z << "\n";
         updateCameraVectors();
     }
 
