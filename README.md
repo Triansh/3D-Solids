@@ -1,9 +1,12 @@
-# 3D Shapes
+# 3D Solids
+
+## Overview
+
  This project basically involves constructing 3D shapes in OpenGL by using the OpenGL pipeline. \
  Following figures are made:
   * Decagonal Prism
-  * Hexagonal Di-pyramid
-  * Un-decagonal Pyramid
+  * Hexagonal Dipyramid
+  * Undecagonal Pyramid
  
 ## Installation
 
@@ -16,7 +19,7 @@ Run the following commands to open a new window.
 $ mkdir build && cd build
 $ cmake ..
 $ make 
-$ ./3DShapes
+$ ./3DSolids
 ```
 
 ## Controls
